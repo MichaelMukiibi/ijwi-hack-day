@@ -75,3 +75,7 @@ The first demo is complete when a user can upload an image, receive real FastDRS
 ## Live conversation increment
 
 The landing page retains the original visual direction and now has a Talk to Ijwi section. The chat uses suggested starting questions, text messages, loading, Stop, explicit retry, and New conversation. Replies identify Cloudflare Workers AI or Google fallback. A visible note explains fallback routing and in-memory-only history. Sample workspace previews remain labeled separately. Screening, citations, and clinical summaries are not claimed as live chat capabilities.
+
+## Separate /screen workspace
+
+The screening route retains the existing off-white, green, readable design. It has two responsive cards for image upload and actual model results, with an optional result conversation beneath them. JPEG/PNG preview, size errors, busy/cancel states, prediction scores, hashes/version, and failure messages are explicit. No sample prediction replaces a failed request. The result conversation is reset for each new image and is kept separate from the general landing-page chatbot.
