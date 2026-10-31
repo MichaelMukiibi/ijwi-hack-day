@@ -1,4 +1,4 @@
-import { WorkspacePreview } from './components/WorkspacePreview.jsx';
+import { WorkspacePreview } from './components/WorkspacePreview.tsx';
 
 export default function App() {
   return (<>

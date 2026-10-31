@@ -43,7 +43,7 @@ We will show Adaptionâ€™s contribution through actual dataset artifacts and
 
 ## Current status and evidence
 
-**React frontend and backend connection implemented locally.** The landing page retains its design. TanStack Query fetches labeled sample workspace content from a separate application API. Live Gemma conversations, FastDRS inference, retrieval, and deployment are not connected yet.
+**React + TypeScript frontend and backend connection implemented locally.** The landing page retains its design. TanStack Query fetches labeled sample workspace content from a separate application API. Live Gemma conversations, FastDRS inference, retrieval, and deployment are not connected yet.
 
 Public demo, demonstration video, measured latency, evaluation results, and implementation evidence will be added after they exist. English is the initial language; French and Kinyarwanda remain planned and require evaluation.
 

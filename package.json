@@ -2,14 +2,12 @@
   "name": "ijwi-hack-day",
   "version": "0.1.0",
   "private": true,
-  "workspaces": [
-    "frontend",
-    "backend"
-  ],
   "scripts": {
-    "dev:frontend": "npm run dev --workspace @ijwi/frontend",
-    "dev:backend": "npm run dev --workspace @ijwi/backend",
-    "build": "npm run build --workspace @ijwi/frontend",
-    "test": "npm run test --workspace @ijwi/backend"
-  }
+    "dev:frontend": "pnpm --filter @ijwi/frontend dev",
+    "dev:backend": "pnpm --filter @ijwi/backend dev",
+    "build": "pnpm --filter @ijwi/frontend build",
+    "check": "pnpm --filter @ijwi/frontend check",
+    "test": "pnpm --filter @ijwi/backend test"
+  },
+  "packageManager": "pnpm@10.11.0"
 }
