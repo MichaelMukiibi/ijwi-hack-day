@@ -7,7 +7,7 @@
     "dev:backend": "pnpm --filter @ijwi/backend dev",
     "build": "pnpm --filter @ijwi/frontend build",
     "check": "pnpm --filter @ijwi/frontend check",
-    "test": "pnpm --filter @ijwi/backend test",
+    "test": "pnpm --filter @ijwi/backend test && pnpm --filter @ijwi/frontend test",
     "deploy:frontend": "pnpm --filter @ijwi/frontend deploy",
     "deploy:backend": "pnpm --filter @ijwi/backend deploy"
   },
