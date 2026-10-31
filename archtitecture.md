@@ -1,4 +1,4 @@
-# Ijwi ry’Amaso — architecture
+# Ijwi — architecture
 
 Status: agreed system direction, before implementation. Filename follows the requested `archtitecture.md` spelling.
 

@@ -1,4 +1,4 @@
-# Ijwi ry’Amaso — UI design
+# Ijwi — UI design
 
 Status: proposed first deliverable; application implementation has not started.
 

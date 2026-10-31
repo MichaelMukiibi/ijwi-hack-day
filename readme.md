@@ -1,4 +1,4 @@
-# Ijwi ry’Amaso
+# Ijwi
 
 **A conversational retinal-screening assistant for community health workers, powered by Gemma 4 and FastDRS.**
 
@@ -12,7 +12,7 @@ A retinal-screening prediction alone does not provide a complete case handoff. H
 
 ## What we are building
 
-Ijwi ry’Amaso connects a fundus-image screening result with a persistent conversation. A health worker uploads an image, supplies case history, asks questions, and receives a draft summary linked to supporting reference passages.
+Ijwi connects a fundus-image screening result with a persistent conversation. A health worker uploads an image, supplies case history, asks questions, and receives a draft summary linked to supporting reference passages.
 
 FastDRS supplies the specialized screening prediction. Gemma 4 asks follow-up questions, requests evidence through tools, and explains the available findings in the context of the case.
 
