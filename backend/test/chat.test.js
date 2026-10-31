@@ -6,7 +6,7 @@ const history=[{role:'user',content:'What information is needed for a screening 
 const request=(body={messages:history},headers={})=>new Request('https://ijwi.example/api/chat',{method:'POST',headers:{'Content-Type':'application/json',...headers},body:JSON.stringify(body)});
 test('Cloudflare binding is primary and receives fixed server instructions',async()=>{
  let called=0;
- const result=await generateReply(history,{AI:{run:async(model,input)=>{called++;assert.equal(model,'@cf/google/gemma-4-26b-a4b-it');assert.equal(input.messages[0].role,'system');assert.equal(input.messages[1].content,history[0].content);return {choices:[{message:{content:'Collect supplied history first.'}}]};}},GOOGLE_API_KEY:'not-a-real-key'},undefined,()=>{throw Error('Google must not run');});
+ const result=await generateReply(history,{AI:{run:async(model,input)=>{called++;assert.equal(model,'@cf/google/gemma-4-26b-a4b-it');assert.equal(input.messages[0].role,'system');assert.equal(input.chat_template_kwargs.enable_thinking,false);assert.equal(input.max_completion_tokens,512);assert.equal(input.messages[1].content,history[0].content);return {choices:[{message:{content:'Collect supplied history first.'}}]};}},GOOGLE_API_KEY:'not-a-real-key'},undefined,()=>{throw Error('Google must not run');});
  assert.equal(called,1);assert.equal(result.provider,'cloudflare');assert.equal(result.fallback,false);
 });
 test('REST Cloudflare path authenticates server-side',async()=>{
@@ -17,7 +17,7 @@ test('Cloudflare failure falls back to Google and maps multi-turn roles',async()
  const messages=[...history,{role:'assistant',content:'What is missing?'},{role:'user',content:'No image yet.'}];
  const result=await generateReply(messages,{AI:{run:async()=>{throw Error('private provider error');}},GOOGLE_API_KEY:'test-only'},undefined,async(url,options)=>{
   assert.match(url,/gemma-4-26b-a4b-it:generateContent$/);assert.equal(options.headers['x-goog-api-key'],'test-only');
-  const body=JSON.parse(options.body);assert.deepEqual(body.contents.map(m=>m.role),['user','model','user']);assert(body.systemInstruction.parts[0].text);
+  const body=JSON.parse(options.body);assert.deepEqual(body.contents.map(m=>m.role),['user','model','user']);assert(body.systemInstruction.parts[0].text);assert.equal(body.generationConfig.thinkingConfig.thinkingLevel,'minimal');
   return Response.json({candidates:[{content:{parts:[{thought:true,text:'private reasoning'},{text:'Please attach a fundus image before screening.'}]}}]});
  });
  assert.equal(result.provider,'google');assert.equal(result.fallback,true);assert(!result.reply.includes('private reasoning'));
@@ -53,4 +53,14 @@ test('chat returns live reply metadata and preserves successful HTTP contract',a
 test('aborted Cloudflare request never sends conversation to fallback',async()=>{
  const controller=new AbortController();controller.abort();let calls=0;
  await assert.rejects(generateReply(history,{AI:{run:async()=>{throw Error('aborted');}},GOOGLE_API_KEY:'test-only'},controller.signal,async()=>{calls++;}));assert.equal(calls,0);
+});
+
+test('missing fallback and provider HTTP failures produce useful secret-safe errors',async()=>{
+ const response=await handleRequest(request(),{CLOUDFLARE_ACCOUNT_ID:'account',CLOUDFLARE_API_TOKEN:'private-token'},{fetcher:async()=>Response.json({error:'private-token'},{status:401})});
+ assert.equal(response.status,503);const {error}=await response.json();assert.match(error,/authentication/);assert.match(error,/Google fallback is not configured/);assert(!error.includes('private-token'));
+});
+test('rate limit and model errors are distinguished without upstream response text',async()=>{
+ for(const [status,expected] of [[429,/quota or rate limit/],[404,/model is unavailable/]]) {
+  await assert.rejects(generateReply(history,{GOOGLE_API_KEY:'test-key'},undefined,async()=>Response.json({error:'sensitive upstream response'},{status})),error=>expected.test(error.message)&&!error.message.includes('sensitive'));
+ }
 });
