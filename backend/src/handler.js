@@ -1,3 +1,4 @@
+import {handleScreening, screeningConfigured} from './screening.js';
 import { previews } from './previews.js';
 import { generateReply, providerStatus, ProviderError } from './gemma.js';
 const MAX_BODY_BYTES=32_768;
@@ -32,6 +33,7 @@ export async function handleRequest(request, env = {}, dependencies = {}) {
   if(browserOrigin&&browserOrigin!==origin&&!allowed.includes(browserOrigin))return json({error:'Origin not allowed'},403);
   if(browserOrigin&&allowed.includes(browserOrigin)){responseHeaders['Access-Control-Allow-Origin']=browserOrigin;responseHeaders.Vary='Origin';}
   if(request.method==='OPTIONS')return new Response(null,{status:204,headers:{...responseHeaders,'Access-Control-Allow-Methods':'GET, POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type'}});
+  if(pathname==='/api/screen'||pathname.startsWith('/api/screen/'))return handleScreening(request,env,responseHeaders,{readBody,validateMessages},dependencies);
   if(pathname==='/api/chat') {
     if(request.method!=='POST')return json({error:'Method not allowed'},405,{Allow:'POST'});
     try {
@@ -42,7 +44,7 @@ export async function handleRequest(request, env = {}, dependencies = {}) {
     } catch(error) {return json({error:error instanceof ProviderError?error.message:'Chat could not complete. Please try again.'},error instanceof ProviderError?error.status:503);}
   }
   if(request.method!=='GET')return json({error:'Method not allowed'},405,{Allow:'GET'});
-  if(pathname==='/api/health'){const providers=providerStatus(env);return json({status:'ok',service:'ijwi-api',capabilities:{preview:true,gemma:providers.cloudflare||providers.google,screening:false},providers});}
+  if(pathname==='/api/health'){const providers=providerStatus(env);return json({status:'ok',service:'ijwi-api',capabilities:{preview:true,gemma:providers.cloudflare||providers.google,screening:screeningConfigured(env)},providers});}
   const match=pathname.match(/^\/api\/preview\/(case|conversation|summary)$/);
   if(match)return json({...previews[match[1]],mode:'sample'});
   return json({error:'Not found'},404);

@@ -46,7 +46,7 @@ async function withDeadline(action, parentSignal) {
   try {return await Promise.race([Promise.resolve().then(()=>action(signal)),aborted]);}
   finally {signal.removeEventListener('abort',listener);}
 }
-export async function generateReply(messages, env, parentSignal, fetcher=fetch) {
+export async function generateReply(messages, env, parentSignal, fetcher=fetch, options={}) {
   const providers = providerStatus(env);
   if (!providers.cloudflare && !providers.google) throw new ProviderError('Chat is not configured yet. Add the backend provider credentials.');
   const failures=[];
@@ -54,7 +54,7 @@ export async function generateReply(messages, env, parentSignal, fetcher=fetch) 
   if (providers.cloudflare) {
     try {
       const output = await withDeadline(async signal=>{
-        const input={messages:[{role:'system',content:SYSTEM_PROMPT},...messages],max_completion_tokens:512,temperature:0.3,stream:false,chat_template_kwargs:{enable_thinking:false}};
+        const input={messages:[{role:'system',content:options.systemPrompt ?? SYSTEM_PROMPT},...messages],max_completion_tokens:512,temperature:0.3,stream:false,chat_template_kwargs:{enable_thinking:false}};
         if (env.AI?.run) return env.AI.run(model,input);
         const response=await fetcher(`https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(env.CLOUDFLARE_ACCOUNT_ID)}/ai/run/${model}`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${env.CLOUDFLARE_API_TOKEN}`},body:JSON.stringify(input),signal});
         if (!response.ok) throw failureForStatus(response.status);
@@ -71,7 +71,7 @@ export async function generateReply(messages, env, parentSignal, fetcher=fetch) 
     try {
       const googleModel=env.GOOGLE_GEMMA_MODEL || GOOGLE_MODEL;
       const output=await withDeadline(async signal=>{
-        const response=await fetcher(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(googleModel)}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GOOGLE_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:SYSTEM_PROMPT}]},contents:messages.map(message=>({role:message.role==='assistant'?'model':'user',parts:[{text:message.content}]})),generationConfig:{maxOutputTokens:512,temperature:0.3,thinkingConfig:{thinkingLevel:'minimal'}}}),signal});
+        const response=await fetcher(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(googleModel)}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GOOGLE_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:options.systemPrompt ?? SYSTEM_PROMPT}]},contents:messages.map(message=>({role:message.role==='assistant'?'model':'user',parts:[{text:message.content}]})),generationConfig:{maxOutputTokens:512,temperature:0.3,thinkingConfig:{thinkingLevel:'minimal'}}}),signal});
         if(!response.ok) throw failureForStatus(response.status);return response.json();
       },parentSignal);
       return {reply:googleText(output),provider:'google',model:googleModel,fallback:true};

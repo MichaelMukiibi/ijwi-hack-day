@@ -22,7 +22,7 @@ Rwanda already has AI-assisted retinal screening. RIIO reports working with **fo
 
 Ijwi combines **FastDRS, an open-source diabetic-retinopathy screening library**, with **Gemma 4, open-weight AI**. Developers can inspect and extend FastDRS, while Gemma's available weights create a path toward local adaptation and alternative hosting. [Gemma documentation](https://ai.google.dev/gemma/docs/core).
 
-The differentiator is specialized retinal screening connected to a conversational workflow for frontline health workers: identifying missing information, explaining available findings, and preparing clearer specialist handoffs. Reviewed Kinyarwanda explanations are planned. Gemma chat is working; connecting FastDRS results, evidence retrieval, and cited summaries remains the next integration milestone.
+The differentiator is specialized retinal screening connected to a conversational workflow for frontline health workers: identifying missing information, explaining available findings, and preparing clearer specialist handoffs. Reviewed Kinyarwanda explanations are planned. Gemma chat and standalone FastDRS result integration are implemented; evidence retrieval and cited summaries remain the next integration milestones.
 
 ### Impact and market opportunity
 
@@ -65,7 +65,7 @@ We will show Adaptionâ€™s contribution through actual dataset artifacts and
 
 ## Current status and evidence
 
-**React + TypeScript landing page and Gemma chat implemented locally.** The conversation calls Cloudflare Workers AI first and Google Gemma 4 as fallback, with provider labels and error states. Provider adapters are covered by mocked tests; live credentials and deployed behavior have not been verified. FastDRS inference, evidence retrieval, and durable case storage remain planned.
+**React + TypeScript landing page and Gemma chat implemented locally.** The conversation calls Cloudflare Workers AI first and Google Gemma 4 as fallback, with provider labels and error states. Provider adapters have mocked tests and live Cloudflare smoke checks. FastDRS inference is implemented in the optional standalone screening service; its DigitalOcean deployment is not yet verified. Evidence retrieval and durable case storage remain planned.
 
 Public demo, demonstration video, measured latency, evaluation results, and implementation evidence will be added after they exist. English is the initial language; French and Kinyarwanda remain planned and require evaluation.
 
@@ -78,3 +78,7 @@ Created by **Michael Kirinnya Mukiibi**. Built on [FastDRS](https://github.com/M
 Event: Build54 Africa Foundation, ALX Rwanda, GDG Rwanda, and Major League Hacking. First prize category sponsor: Google DeepMind / Google. Planned platform contributions: Adaption and Cloudflare.
 
 Rift Research sponsorship is identified in the supplied project handoff; final public acknowledgment wording is pending confirmation.
+
+## Image-screening workspace
+
+The separate `/screen` feature adds image upload, real FastDRS CPU inference, model scores/provenance, and a result-aware Gemma conversation. It uses an isolated Docker/FastAPI service and does not replace the existing chatbot. See the [screening service guide](backend/inference/README.md) and [DigitalOcean deployment instructions](backend/inference/DIGITALOCEAN.md). Local real-model smoke testing is not clinical validation or proof of a deployed DigitalOcean service.
