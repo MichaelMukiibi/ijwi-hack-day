@@ -70,3 +70,7 @@ pnpm --dir "C:\Users\Personal\Desktop\Work\ijwi-hack-day" deploy:backend
 ```
 
 The equivalent explicit command from the repository root is `pnpm exec wrangler deploy --config backend/wrangler.jsonc`. For the frontend, build first with `pnpm build`, then use `pnpm deploy:frontend`. Each package's own deploy scripts also explicitly select its local wrangler.jsonc. The backend config already defines main=src/handler.js and compatibility_date; no new entry file is needed.
+
+## Optional DigitalOcean image screening
+
+Deploy the independent Docker/FastAPI service using [backend/inference/DIGITALOCEAN.md](backend/inference/DIGITALOCEAN.md). Then configure FASTDRS_API_URL, FASTDRS_API_TOKEN, and SCREENING_CONTEXT_SECRET on ijwi-api and deploy the updated frontend/backend. The existing BACKEND binding already forwards these API paths. General chat does not require these screening secrets.
