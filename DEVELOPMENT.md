@@ -63,14 +63,18 @@ Provider tests use mocked network responses and do not incur model requests. Liv
 ## Python tooling
 
 ```sh
-uv sync --project backend/inference
-uv run --project backend/inference ruff check .
+uv --directory backend/inference sync
+uv --directory backend/inference run ruff check app scripts tests
 ```
 
-Add Python packages with `uv add --project backend/inference`. Commit uv.lock and pnpm-lock.yaml; never .env or .venv. Frontend variables beginning with VITE_ are public and must not contain secrets.
+Add Python packages with `uv --directory backend/inference add`. Commit uv.lock and pnpm-lock.yaml; never .env or .venv. Frontend variables beginning with VITE_ are public and must not contain secrets.
 
 Workflow: work on `feat/<scope>`, merge finished work into local `dev`, leave pushing to the owner. No browser automation.
 
 Local Vite is pinned to port 5173 (strict). The Node API adapter accepts both http://localhost:5173 and http://127.0.0.1:5173 without .env changes. For a different direct frontend origin, set ALLOWED_ORIGINS to its exact origin (scheme, hostname, and port). Production service-binding requests are origin-validated by the frontend Worker before proxying.
 
 Chat explicitly disables Cloudflare thinking and uses Google minimal thinking for interactive responses. Provider deadlines are 30 seconds each; frontend timeout is 65 seconds. Error messages distinguish credentials/permissions, quota, missing models, timeouts, and missing Google fallback without exposing provider bodies. A missing GOOGLE_API_KEY means there is no configured fallback if Cloudflare fails.
+
+## Image screening
+
+The new `/screen` route is independent of the existing chatbot. See [inference README](backend/inference/README.md) for uv setup, uploads, API schema, model verification, and tests; see [DigitalOcean deployment](backend/inference/DIGITALOCEAN.md) for Docker, HTTPS, costs, and Worker secrets. The application still runs without inference configuration; only screening is unavailable.

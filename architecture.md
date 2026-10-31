@@ -173,3 +173,33 @@ Root deploy scripts now select backend/wrangler.jsonc or frontend/wrangler.jsonc
 The canonical server prompt now lives in backend/src/prompt.js with version rwanda-chw-v2 and is shared by both providers. It names community health workers in Rwanda as the audience, requests plain language and normally 40–90 words, limits follow-up to one focused question, reuses known case facts, accepts unknown information, and gives short style examples. It avoids repeated disclaimer blocks and raw Markdown by default while preserving accurate capability boundaries and professional-review requirements. Prompt rules guide generation rather than guarantee compliance; live behavior and tests must be assessed separately.
 
 AssistantMessage renders any residual Markdown through react-markdown with raw HTML skipped, no images, and only HTTP/HTTPS links. Heading sizes are normalized to the chat typography. User messages remain plain text. No string stripping or truncation changes the meaning of model output. This is display formatting, not evidence validation.
+
+## Change: isolated retinal image screening on DigitalOcean
+
+The `/screen` page is a lazy-loaded React route with its own upload/results state and separate result conversation. The original landing page and `/api/chat` continue to use the existing prompt and provider behavior. The new FastAPI service lives entirely in `backend/inference/` with uv-managed dependencies, Dockerfile, compose.yaml, model download script, OpenAPI result schema, tests, and DigitalOcean instructions. CPU-only torch/torchvision sources avoid CUDA dependencies on Linux. A fixed MobileNetV2 v0.1.1 checkpoint is checksum-verified; fastdrs is pinned to 0.1.15.
+
+```mermaid
+flowchart LR
+    A[Browser /screen] --> B[Frontend Worker proxy]
+    B --> C[Backend /api/screen]
+    C --> D[DigitalOcean HTTPS /v1/screen]
+    D --> E[Docker FastAPI + CPU FastDRS]
+    E --> C
+    C --> F[Result + signed context]
+    F --> A
+    A --> G[Backend /api/screen/chat]
+    G --> H[Verify HMAC signature + 1h expiry]
+    H --> I[Gemma with result-aware prompt]
+```
+
+Images are bounded to 5 MiB JPEG/PNG, 20 million decoded pixels, one frame. Both Worker and FastAPI cap request reads; FastAPI checks actual image decoding rather than trusting MIME alone. One inference slot rejects concurrent predictions with 429. Missing weights, invalid outputs, and startup failures yield a clear error and no fabricated prediction. Returned probabilities are labeled model scores, with no clinical calibration or image-quality claims.
+
+The backend adds optional FASTDRS_API_URL, FASTDRS_API_TOKEN, and SCREENING_CONTEXT_SECRET. The first is an HTTPS service base URL (loopback HTTP is allowed locally); tokens are server-side only. The Worker authenticates to FastAPI, validates result structure, and signs the result with HMAC-SHA256 for a one-hour context token. The separate screening conversation verifies that token and never trusts unsigned result fields from the browser. The image is not sent to Gemma, and source citations or clinical urgency are not invented. Signed tokens are not encrypted and can be replayed within their lifetime; rate limits and scope checks still apply. Rotating the context secret invalidates outstanding tokens.
+
+No new D1/R2/Redis service is introduced. Images/results/conversations are not durably persisted in this feature; multipart parsing can use temporary files that close after requests. Browser previews and chat state clear on replacement/reload. Screening health reports configured/ready separately from provider health. A missing inference configuration does not prevent the existing chatbot from operating.
+
+Cost target: one 2 GiB CPU Droplet currently listed at $12/month, within the user's $25 credits before taxes, other resources, or extras. No cloud resources have been provisioned automatically. The dedicated service is intended to sit behind HTTPS (Caddy example included). See backend/inference/DIGITALOCEAN.md for setup, budget management, verification, and rollback.
+
+Verification distinguishes Python API tests with an injected test engine from an actual CPU checkpoint smoke test on a generated image. The latter verifies the software path and is not retinal-model accuracy validation. Docker and a live DigitalOcean host must be checked separately where those runtimes are available.
+
+The completed local end-to-end smoke test served `/screen` through Vite, forwarded a real multipart upload through the Node Worker adapter, obtained a genuine CPU prediction from FastAPI/FastDRS, signed its context, and received a live Cloudflare Gemma reply through `/api/screen/chat`. Only a generated synthetic image was used. Container-image execution and DigitalOcean hosting remain unverified here because Docker/doctl are unavailable. Existing general-chat regression tests still pass.

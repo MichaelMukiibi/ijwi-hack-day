@@ -21,7 +21,7 @@ export default function App() {
 }
 
 function Header() {
-  return (<header className="header wrap"><a className="brand" href="#" aria-label="Ijwi home"><span className="brand-icon" aria-hidden="true">◉</span> ijwi<span className="brand-dot">.</span></a><nav aria-label="Main navigation"><a href="#approach">Our approach</a><a href="#preview">Explore Ijwi</a><a href="https://github.com/MichaelMukiibi/ijwi-hack-day" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav><a className="button button-small" href="#chat">Talk to Ijwi <span aria-hidden="true">↗</span></a></header>);
+  return (<header className="header wrap"><a className="brand" href="#" aria-label="Ijwi home"><span className="brand-icon" aria-hidden="true">◉</span> ijwi<span className="brand-dot">.</span></a><nav aria-label="Main navigation"><a href="#approach">Our approach</a><a href="#preview">Explore Ijwi</a><a href="https://github.com/MichaelMukiibi/ijwi-hack-day" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a href="/screen">Screen an image</a></nav><a className="button button-small" href="#chat">Talk to Ijwi <span aria-hidden="true">↗</span></a></header>);
 }
 
 function Hero() {
