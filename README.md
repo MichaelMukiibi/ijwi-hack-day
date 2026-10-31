@@ -43,7 +43,7 @@ We will show Adaption’s contribution through actual dataset artifacts and eval
 
 ## Current status and evidence
 
-**Planning and design documentation only. Application implementation has not started.**
+**Landing page implemented locally.** Includes a responsive project introduction and an interactive, explicitly illustrative workspace preview. Live Gemma conversations, FastDRS inference, retrieval, and deployment are not connected yet.
 
 Public demo, demonstration video, measured latency, evaluation results, and implementation evidence will be added after they exist. English is the initial language; French and Kinyarwanda remain planned and require evaluation.
 
