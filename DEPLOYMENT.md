@@ -52,3 +52,21 @@ pnpm deploy:frontend
 ```
 
 `.env` is local-only. Production Worker secrets are entered in the Cloudflare dashboard or through `pnpm exec wrangler secret put GOOGLE_API_KEY --config backend/wrangler.jsonc`. Wrangler may deploy a Worker version when setting a secret; run it only when you intend to change the deployment. Do not upload a full development `.env` containing unrelated credentials. Workers Builds authentication is separate from application runtime secrets.
+
+## Troubleshooting: missing entry point / project-name prompt
+
+If Wrangler asks for a project name or compatibility date, it has not selected this repository's existing config. Do not initialize another project. Stop that command and select the backend config explicitly.
+
+From the repository root:
+
+```sh
+pnpm deploy:backend
+```
+
+From any PowerShell directory:
+
+```powershell
+pnpm --dir "C:\Users\Personal\Desktop\Work\ijwi-hack-day" deploy:backend
+```
+
+The equivalent explicit command from the repository root is `pnpm exec wrangler deploy --config backend/wrangler.jsonc`. For the frontend, build first with `pnpm build`, then use `pnpm deploy:frontend`. Each package's own deploy scripts also explicitly select its local wrangler.jsonc. The backend config already defines main=src/handler.js and compatibility_date; no new entry file is needed.

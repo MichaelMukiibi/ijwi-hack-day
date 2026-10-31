@@ -8,8 +8,8 @@
     "build": "pnpm --filter @ijwi/frontend build",
     "check": "pnpm --filter @ijwi/frontend check",
     "test": "pnpm --filter @ijwi/backend test && pnpm --filter @ijwi/frontend test",
-    "deploy:frontend": "pnpm --filter @ijwi/frontend deploy",
-    "deploy:backend": "pnpm --filter @ijwi/backend deploy"
+    "deploy:frontend": "wrangler deploy --config frontend/wrangler.jsonc",
+    "deploy:backend": "wrangler deploy --config backend/wrangler.jsonc"
   },
   "packageManager": "pnpm@10.11.0",
   "devDependencies": {

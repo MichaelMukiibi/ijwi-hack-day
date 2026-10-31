@@ -8,8 +8,8 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "check": "tsc --noEmit",
-    "deploy": "wrangler deploy",
-    "deploy:check": "wrangler deploy --dry-run",
+    "deploy": "wrangler deploy --config wrangler.jsonc",
+    "deploy:check": "wrangler deploy --config wrangler.jsonc --dry-run",
     "test": "node --test test/*.test.mjs"
   },
   "dependencies": {
