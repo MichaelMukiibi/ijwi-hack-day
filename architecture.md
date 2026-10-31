@@ -134,3 +134,13 @@ Each provider gets a 20-second deadline. REST requests are aborted at timeout; b
 Documented model defaults: Cloudflare `@cf/google/gemma-4-26b-a4b-it`; Google `gemma-4-26b-a4b-it`. Both are configurable in backend environment settings. Configuration presence is reported by health; it is not proof of successful authentication. Live credential verification remains separate from mocked adapter tests and Wrangler dry runs.
 
 Sources: https://developers.cloudflare.com/workers-ai/models/gemma-4-26b-a4b-it/ and https://ai.google.dev/gemma/docs/core/gemma_on_gemini_api
+
+## Change: clinician handoff and report review demo
+
+The React landing page now includes a focused clinician handoff workspace linked from the existing preview. It uses a typed synthetic fixture and in-memory frontend state; it adds no route, API, database table, framework, or dependency.
+
+The workspace separates patient-reported context, health-worker-entered observations, FastDRS availability, illustrative AI-draft placeholders, and clinician-entered fields. No live model generated the illustrative draft. Evidence and screening output remain explicitly unavailable. Missing fixture fields appear as review prompts, not inferred clinical facts.
+
+Reviewers can edit structured report sections, save a draft in page memory, move through review states, explicitly approve a saved and unchanged draft, reopen an approved report, reset the synthetic fixture, and print a clean report. Approval records no reviewer identity or signature. Activity timestamps are generated when demo actions occur; the history is neither secure nor permanent. All state clears on reload. No real patient data may be entered.
+
+This front-end-only contribution does not connect Gemma, FastDRS, RAG, D1, or persistent medical records. It does not provide diagnosis, treatment recommendations, or clinical validation.

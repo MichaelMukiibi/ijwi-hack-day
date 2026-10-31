@@ -1,4 +1,5 @@
 import { Chat } from './components/Chat';
+import { ClinicianHandoff } from './components/ClinicianHandoff';
 import { WorkspacePreview } from './components/WorkspacePreview.tsx';
 
 export default function App() {
@@ -9,7 +10,8 @@ export default function App() {
 <Hero />
 <section className="foundation"><div className="wrap foundation-inner"><p>ONE CONNECTED WORKFLOW.<br /><strong>Built on open technology.</strong></p><div className="tech"><span>fast<span className="serif">DRS</span></span><span>Gemma <small>4</small></span><span>Cloudflare</span><span>Adaption</span></div></div></section>
 <Approach />
-<section id="preview" className="preview-section"><div className="wrap preview-grid"><div className="preview-copy"><p className="eyebrow">02 / INSIDE IJWI</p><h2>A little context.<br /><em>A clearer next conversation.</em></h2><p>Explore how the planned workspace connects a case, a conversation, and a review summary.</p></div><WorkspacePreview /></div></section>
+<section id="preview" className="preview-section"><div className="wrap preview-grid"><div className="preview-copy"><p className="eyebrow">02 / INSIDE IJWI</p><h2>A little context.<br /><em>A clearer next conversation.</em></h2><p>Explore how the planned workspace connects a case, a conversation, and a review summary.</p><a className="button button-small preview-handoff-link" href="#handoff">Open clinician handoff <span aria-hidden="true">↗</span></a></div><WorkspacePreview /></div></section>
+<ClinicianHandoff />
 <Chat />
 <Closing />
 </main><Footer />
