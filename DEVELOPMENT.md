@@ -28,6 +28,18 @@ Open the Vite URL (normally http://127.0.0.1:5173). Vite proxies `/api` to port 
 - `architecture.md`: canonical design and change record. Update it for every feature.
 - `DEPLOYMENT.md`: GitHub / Cloudflare build and deployment settings.
 
+## Clinician handoff demo
+
+Open **Explore Ijwi → Open clinician handoff** to review the synthetic case. The workspace separates supplied case context, health-worker observations, unavailable FastDRS output, illustrative AI-draft placeholders, and clinician-entered report fields. Evidence retrieval and backend persistence are not connected.
+
+Draft edits, review status, and activity history exist only in page memory and clear on reload. Save before approval; approval requires an explicit action. Do not enter real patient information. Use **Print report** for a clean browser print-to-PDF layout.
+
+## Doctor's report workspace demo
+
+Open **Explore Ijwi → Open doctor’s report workspace** to review synthetic queue items. The case queue, screening history, worker observations, case-linked Gemma explanation, and evidence are demo-only or explicitly unavailable. The existing Gemma chat is not connected to these cases.
+
+Clinicians can edit and save a structured report, review it, return it for changes, explicitly approve a saved report, reopen review, track in-memory activity, and print a clean report. Drafts and activity clear on reload. Do not enter real patient information.
+
 ## API
 
 - GET `/api/health`: provider configuration availability and implemented capabilities.
