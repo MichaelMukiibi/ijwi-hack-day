@@ -134,3 +134,9 @@ Each provider gets a 20-second deadline. REST requests are aborted at timeout; b
 Documented model defaults: Cloudflare `@cf/google/gemma-4-26b-a4b-it`; Google `gemma-4-26b-a4b-it`. Both are configurable in backend environment settings. Configuration presence is reported by health; it is not proof of successful authentication. Live credential verification remains separate from mocked adapter tests and Wrangler dry runs.
 
 Sources: https://developers.cloudflare.com/workers-ai/models/gemma-4-26b-a4b-it/ and https://ai.google.dev/gemma/docs/core/gemma_on_gemini_api
+
+## Change: browser Origin handling
+
+The frontend proxy validates browser Origin against its own public URL before forwarding API calls. It removes the already-validated Origin header on the internal service-binding request, avoiding comparison with a backend address. Foreign browser origins remain rejected at the frontend boundary; direct backend requests retain the explicit origin allowlist.
+
+The Node development adapter adds only http://127.0.0.1:5173 and http://localhost:5173 to its local allowed origins. Vite now uses port 5173 with strictPort, so an occupied port produces an explicit error rather than silently moving to an unconfigured origin. Custom direct API frontend origins still require ALLOWED_ORIGINS. Regression coverage includes real local HTTP requests with browser Origin and production proxy validation.
