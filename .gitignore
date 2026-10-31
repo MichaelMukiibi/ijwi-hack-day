@@ -4,3 +4,4 @@ tmp/
 !.env.example
 node_modules/
 .wrangler/
+dist/

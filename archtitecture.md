@@ -107,3 +107,7 @@ No clinical validation, deployment, benchmark, language-quality result, or laten
 ## Repository workflow
 
 Use `dev` as the integration branch and `feat/<scope>` for changes. Keep application implementation separate from this documentation baseline. No automatic publishing, external submission, or sponsor messaging is implied by the handoff documents.
+
+## Frontend implementation baseline
+
+The landing page now uses React and Vite in `frontend/`, with TanStack Query owning API fetching, cancellation, caching, loading, and retry states. `backend/` holds the application Worker API and a Node development adapter. Vite proxies `/api` locally; the root Wrangler configuration combines the built frontend assets with the same backend handler for same-origin production requests. The health endpoint reports implemented capabilities, and preview endpoints explicitly return sample content. Gemma, FastDRS, and persistence remain future integrations.
