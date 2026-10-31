@@ -1,6 +1,6 @@
 # Ijwi — UI design
 
-Status: proposed first deliverable; application implementation has not started.
+Status: landing page and text conversation UI implemented; screening and cited specialist handoff remain planned.
 
 ## Product and primary user
 
@@ -71,3 +71,7 @@ Start with English. French and Kinyarwanda are planned options gated on language
 Keyboard navigation, visible focus, programmatic field labels, accessible status announcements, and adequate contrast are required. Tool updates must not steal focus. Touch targets should be at least 44px.
 
 The first demo is complete when a user can upload an image, receive real FastDRS output, have a persistent Gemma conversation, inspect a retrieved citation, and save a draft summary on both desktop and mobile. Performance is measured during implementation; no latency claim is established yet.
+
+## Live conversation increment
+
+The landing page retains the original visual direction and now has a Talk to Ijwi section. The chat uses suggested starting questions, text messages, loading, Stop, explicit retry, and New conversation. Replies identify Cloudflare Workers AI or Google fallback. A visible note explains fallback routing and in-memory-only history. Sample workspace previews remain labeled separately. Screening, citations, and clinical summaries are not claimed as live chat capabilities.

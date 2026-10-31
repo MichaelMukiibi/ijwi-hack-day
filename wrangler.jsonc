@@ -1,12 +1,19 @@
 {
   "name": "ijwi-hack-day",
-  "main": "backend/src/handler.js",
+  "main": "frontend/worker.ts",
   "compatibility_date": "2026-10-31",
   "assets": {
     "directory": "./frontend/dist",
     "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
     "run_worker_first": [
       "/api/*"
     ]
-  }
+  },
+  "services": [
+    {
+      "binding": "BACKEND",
+      "service": "ijwi-api"
+    }
+  ]
 }

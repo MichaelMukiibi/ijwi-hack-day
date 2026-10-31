@@ -1,39 +1,60 @@
 # Local development
 
-Requires Node.js 20.19+ or 22.12+ and pnpm 10. From the repository root:
+Requires Node.js 20.19+ or 22.12+ and pnpm 10. Python inference work uses uv.
 
 ```sh
 pnpm install --frozen-lockfile
-pnpm dev:backend
 ```
 
-In a second terminal:
+Copy `backend/.env.example` to `backend/.env` if it does not exist, then fill provider keys. This file is ignored. The Node backend reads it automatically. Do not overwrite an existing .env containing your keys. The deployed backend uses its Workers AI binding and Worker secrets instead.
+
+Start two terminals from the repository root:
+
+```sh
+pnpm dev:backend
+```
 
 ```sh
 pnpm dev:frontend
 ```
 
-Open the Vite URL (normally http://127.0.0.1:5173). The frontend proxies `/api` to the backend on port 8787. TanStack Query handles fetching, cancellation, caching, and errors. Switch the workspace tabs to request real HTTP responses containing explicitly labeled sample data. Stop the backend to inspect the error and retry states.
+Open the Vite URL (normally http://127.0.0.1:5173). Vite proxies `/api` to port 8787. Backend preview content is explicitly labeled sample data; the separate chat calls actual Gemma providers when credentials are configured. Without keys, chat returns a configuration error. The frontend includes suggestion prompts, multi-turn context, loading, manual retry, cancellation, new conversation, and per-response provider labels. History is in memory only and clears on reload.
 
 ## Layout
 
-- `frontend/`: React, TypeScript, Vite, TanStack Query, original landing-page styling and illustration.
-- `backend/`: Cloudflare-compatible Request/Response handler and dependency-free Node development server. This is the application API; a future Docker/FastDRS inference service remains separate.
-- `backend/src/handler.js`: GET `/api/health`, GET `/api/preview/{case|conversation|summary}`. Unknown routes return 404; unsupported methods return 405.
+- `frontend/`: React, strict TypeScript, Vite, TanStack Query, frontend proxy Worker and Wrangler config.
+- `backend/`: application API Worker, Gemma provider adapters, and dependency-free Node development adapter.
+- `backend/inference/`: uv-managed future Python FastDRS service; no model/inference implementation yet.
+- `architecture.md`: canonical design and change record. Update it for every feature.
+- `DEPLOYMENT.md`: GitHub / Cloudflare build and deployment settings.
 
-No inference, live AI, case persistence, or patient data is involved yet. Preview responses are fixtures served by the backend, not model outputs.
+## API
 
-`frontend/.env.example` documents the optional `VITE_API_BASE_URL`. Default to the same origin; never put secrets in frontend variables. A cross-origin API requires an explicit backend CORS policy, which is not enabled here. The root Wrangler configuration serves the frontend build and routes `/api/*` through the backend handler in the same Worker, keeping production requests on the same origin. Build before deploying. `backend/wrangler.jsonc` is an optional standalone API Worker configuration. Neither has been deployed.
+- GET `/api/health`: provider configuration availability and implemented capabilities.
+- GET `/api/preview/{case|conversation|summary}`: sample workspace content.
+- POST `/api/chat`: `{messages: [{role: "user", content: "..."}, ...]}`. Alternating user/assistant history, ending in user, at most 23 messages / 12 user turns, 4,000 characters per message and 16,000 total characters. Returns reply, provider, model, fallback flag, and request ID.
+
+Cloudflare binding/REST is primary; Google Gemma 4 is fallback. No external clinical evidence, FastDRS prediction, or patient-record tool is attached yet. Synthetic examples only. The UI states fallback behavior before users send a message.
+
+## Checks
 
 ```sh
+pnpm check
 pnpm build
 pnpm test
+pnpm --filter @ijwi/frontend deploy:check
+pnpm --filter @ijwi/backend deploy:check
 ```
 
-Workflow: work on `feat/<scope>`, merge finished work into local `dev`, and leave pushes to the owner.
+Provider tests use mocked network responses and do not incur model requests. Live authentication/model access needs verification with real keys.
 
 ## Python tooling
 
-The future Docker/FastDRS Python service lives in `backend/inference/`. Use `uv sync --project backend/inference` and `uv run --project backend/inference <command>`; add packages with `uv add --project backend/inference`. Its dependency manifest is intentionally minimal until inference is implemented.
+```sh
+uv sync --project backend/inference
+uv run --project backend/inference ruff check .
+```
 
-Run `pnpm check` for strict frontend TypeScript validation. Commit pnpm-lock.yaml and Python uv.lock files when dependencies change.
+Add Python packages with `uv add --project backend/inference`. Commit uv.lock and pnpm-lock.yaml; never .env or .venv. Frontend variables beginning with VITE_ are public and must not contain secrets.
+
+Workflow: work on `feat/<scope>`, merge finished work into local `dev`, leave pushing to the owner. No browser automation.
