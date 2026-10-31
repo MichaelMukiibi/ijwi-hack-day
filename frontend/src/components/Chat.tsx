@@ -1,3 +1,4 @@
+import { AssistantMessage } from './AssistantMessage';
 import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { useMutation } from '@tanstack/react-query';
@@ -38,7 +39,7 @@ export function Chat() {
     <div className="chat-window"><div className="workspace-top"><span className="mini-brand">ijwi.</span><span className="sample-badge">GEMMA 4 CHAT</span><button className="chat-reset" onClick={reset} disabled={mutation.isPending}>New conversation</button></div>
       <div className="chat-log" role="log" aria-label="Conversation with Ijwi" aria-live="polite" aria-relevant="additions text">
         {!messages.length && !submitted && <div className="chat-welcome"><span className="welcome-eye" aria-hidden="true">◎</span><h3>What would you like to understand?</h3><p>I can help you organize a screening case and discuss the information still needed.</p><div className="chat-suggestions">{suggestions.map(text=><button key={text} onClick={()=>{setDraft(text);input.current?.focus();}}>{text}<span aria-hidden="true">↗</span></button>)}</div></div>}
-        {messages.map((message,index)=><div className={`live-message ${message.role}`} key={index}><p className="chat-label">{message.role==='user'?'YOU':'IJWI · GEMMA 4'}</p><div className="chat-bubble">{message.content}</div>{message.metadata&&<p className="reply-source">{message.metadata.provider==='cloudflare'?'Cloudflare Workers AI':'Google API · fallback'} · {message.metadata.model}</p>}</div>)}
+        {messages.map((message,index)=><div className={`live-message ${message.role}`} key={index}><p className="chat-label">{message.role==='user'?'YOU':'IJWI · GEMMA 4'}</p><div className="chat-bubble">{message.role === 'assistant' ? <AssistantMessage content={message.content}/> : message.content}</div>{message.metadata&&<p className="reply-source">{message.metadata.provider==='cloudflare'?'Cloudflare Workers AI':'Google API · fallback'} · {message.metadata.model}</p>}</div>)}
         {submitted && <div className="live-message user"><p className="chat-label">YOU</p><div className="chat-bubble">{submitted.content}</div></div>}
         {mutation.isPending && <p className="chat-progress" role="status">Gemma is preparing a response…</p>}
         <div ref={end}/>
