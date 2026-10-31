@@ -127,10 +127,26 @@ Provider order:
 1. Cloudflare Workers AI Gemma 4 through `env.AI.run`, or its REST API for Node local development with Cloudflare credentials.
 2. Google Gemma 4 via `generateContent` if Cloudflare is missing, errors, times out, or returns no usable text. A provider safety block is returned directly instead of retried on another provider.
 
-Each provider gets a 20-second deadline. REST requests are aborted at timeout; binding calls are deadline-raced because the binding has no request AbortSignal. The client allows 50 seconds for primary plus fallback. Replies include provider/model and fallback metadata; internal errors, keys, and reasoning parts are not returned. Request bodies are size-limited while reading. The backend uses an origin allowlist for optional cross-origin calls and a Cloudflare rate-limit binding (10 requests per minute per IP per Cloudflare location). This is a demo abuse control, not user authentication or a strict global quota.
+Each provider gets a 30-second deadline. REST requests are aborted at timeout; binding calls are deadline-raced because the binding has no request AbortSignal. The client allows 65 seconds for primary plus fallback. Replies include provider/model and fallback metadata; internal errors, keys, and reasoning parts are not returned. Request bodies are size-limited while reading. The backend uses an origin allowlist for optional cross-origin calls and a Cloudflare rate-limit binding (10 requests per minute per IP per Cloudflare location). This is a demo abuse control, not user authentication or a strict global quota.
 
 `backend/.env` holds local server secrets and configuration; it is ignored. `backend/.env.example` documents all expected keys, including reserved later integrations. Frontend `.env` contains only the public optional API base URL. Python inference has its own `.env.example`. Production uses backend Worker secrets and the AI binding; GitHub must never contain real keys. The frontend explains that fallback sends the conversation to Google. Use synthetic cases during this prototype stage.
 
 Documented model defaults: Cloudflare `@cf/google/gemma-4-26b-a4b-it`; Google `gemma-4-26b-a4b-it`. Both are configurable in backend environment settings. Configuration presence is reported by health; it is not proof of successful authentication. Live credential verification remains separate from mocked adapter tests and Wrangler dry runs.
 
 Sources: https://developers.cloudflare.com/workers-ai/models/gemma-4-26b-a4b-it/ and https://ai.google.dev/gemma/docs/core/gemma_on_gemini_api
+
+## Change: browser Origin handling
+
+The frontend proxy validates browser Origin against its own public URL before forwarding API calls. It removes the already-validated Origin header on the internal service-binding request, avoiding comparison with a backend address. Foreign browser origins remain rejected at the frontend boundary; direct backend requests retain the explicit origin allowlist.
+
+The Node development adapter adds only http://127.0.0.1:5173 and http://localhost:5173 to its local allowed origins. Vite now uses port 5173 with strictPort, so an occupied port produces an explicit error rather than silently moving to an unconfigured origin. Custom direct API frontend origins still require ALLOWED_ORIGINS. Regression coverage includes real local HTTP requests with browser Origin and production proxy validation.
+
+## Change: low-latency Gemma generation and actionable provider failures
+
+A live synthetic probe confirmed Cloudflare REST credentials and the configured model worked, while the previous chat request hit its 20-second deadline. The same question with chat_template_kwargs.enable_thinking=false returned a usable response in approximately 8 seconds. Cloudflare chat now explicitly disables thinking and requests up to 512 completion tokens. Google fallback uses thinkingLevel=minimal with 512 output tokens. Both providers receive 30-second deadlines and the frontend allows 65 seconds for primary plus fallback.
+
+Errors now identify static categories (timeout, authentication/permission, quota/rate limit, unavailable model, empty answer, or request failure). If Google fallback is absent, the error says so and identifies GOOGLE_API_KEY as the required configuration. Raw provider error bodies, keys, and internal reasoning remain excluded. Local Google credentials were absent during this investigation; Google fallback remains verified with mocks only.
+
+## Change: explicit deployment configuration selection
+
+Root deploy scripts now select backend/wrangler.jsonc or frontend/wrangler.jsonc explicitly. Package-level deploy and dry-run scripts explicitly select their local config as well. This prevents accidental Wrangler initialization or missing-entry-point errors when configuration auto-discovery does not select the intended package. Use the repository-root scripts, or pnpm --dir with the repository's absolute path from another directory. No deployment has been performed by this change.
