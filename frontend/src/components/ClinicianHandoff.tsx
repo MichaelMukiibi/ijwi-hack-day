@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { ReportDraft, ReviewStatus } from '../lib/handoffDemo';
 import { handoffCase, initialReport, reportSections } from '../lib/handoffDemo';
+import { printReport } from '../lib/print';
 
 const statusLabels: Record<ReviewStatus, string> = {
   awaiting_review: 'Awaiting review',
@@ -197,7 +198,7 @@ export function ClinicianHandoff() {
           <div className="report-actions">
             <div className="report-primary-actions">
               <button className="button" type="button" onClick={saveDraft} disabled={status === 'approved'}>Save draft</button>
-              <button className="report-button" type="button" onClick={() => window.print()}>Print report</button>
+              <button className="report-button" type="button" onClick={() => printReport('handoff')}>Print report</button>
               <button className="report-button reset-button" type="button" onClick={resetDemo}>Reset demo</button>
             </div>
             <div className="review-actions" aria-label="Review status actions">
