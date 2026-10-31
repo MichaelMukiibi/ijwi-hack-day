@@ -1,3 +1,4 @@
+import {SYSTEM_PROMPT} from '../src/prompt.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {handleRequest} from '../src/handler.js';
@@ -63,4 +64,9 @@ test('rate limit and model errors are distinguished without upstream response te
  for(const [status,expected] of [[429,/quota or rate limit/],[404,/model is unavailable/]]) {
   await assert.rejects(generateReply(history,{GOOGLE_API_KEY:'test-key'},undefined,async()=>Response.json({error:'sensitive upstream response'},{status})),error=>expected.test(error.message)&&!error.message.includes('sensitive'));
  }
+});
+
+test('both providers use the same Rwanda health-worker prompt',async()=>{
+ await generateReply(history,{AI:{run:async(model,input)=>{assert.equal(input.messages[0].content,SYSTEM_PROMPT);return {response:'What is the approximate age?'};}}});
+ await generateReply(history,{GOOGLE_API_KEY:'test-only'},undefined,async(url,options)=>{assert.equal(JSON.parse(options.body).systemInstruction.parts[0].text,SYSTEM_PROMPT);return Response.json({candidates:[{content:{parts:[{text:'What is the approximate age?'}]}}]});});
 });

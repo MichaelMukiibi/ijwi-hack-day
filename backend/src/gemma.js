@@ -1,6 +1,6 @@
+import { SYSTEM_PROMPT } from './prompt.js';
 export const CLOUDFLARE_MODEL = '@cf/google/gemma-4-26b-a4b-it';
 export const GOOGLE_MODEL = 'gemma-4-26b-a4b-it';
-const SYSTEM = `You are Ijwi, a research assistant supporting community health workers preparing retinal screening cases for specialist review. Be clear, concise, and respectful. Ask focused follow-up questions when information is missing. Distinguish supplied facts from uncertainty. No image, FastDRS prediction, clinical reference retrieval, or patient record is connected to this conversation. Never claim to have examined an image, run screening, retrieved evidence, or diagnosed a patient. Do not invent citations, test results, or referrals. Do not provide definitive diagnoses or prescribe treatment. Support gathering information and understanding the screening workflow; clinical decisions require a qualified professional. Use plain English unless the user requests another language; do not claim translated medical content has been validated. Do not request names, contact details, or identifiers. Explain that this prototype is not a substitute for clinical assessment when relevant.`;
 export class ProviderError extends Error {
   constructor(message, status=503) {super(message);this.status=status;}
 }
@@ -54,7 +54,7 @@ export async function generateReply(messages, env, parentSignal, fetcher=fetch) 
   if (providers.cloudflare) {
     try {
       const output = await withDeadline(async signal=>{
-        const input={messages:[{role:'system',content:SYSTEM},...messages],max_completion_tokens:512,temperature:0.3,stream:false,chat_template_kwargs:{enable_thinking:false}};
+        const input={messages:[{role:'system',content:SYSTEM_PROMPT},...messages],max_completion_tokens:512,temperature:0.3,stream:false,chat_template_kwargs:{enable_thinking:false}};
         if (env.AI?.run) return env.AI.run(model,input);
         const response=await fetcher(`https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(env.CLOUDFLARE_ACCOUNT_ID)}/ai/run/${model}`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${env.CLOUDFLARE_API_TOKEN}`},body:JSON.stringify(input),signal});
         if (!response.ok) throw failureForStatus(response.status);
@@ -71,7 +71,7 @@ export async function generateReply(messages, env, parentSignal, fetcher=fetch) 
     try {
       const googleModel=env.GOOGLE_GEMMA_MODEL || GOOGLE_MODEL;
       const output=await withDeadline(async signal=>{
-        const response=await fetcher(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(googleModel)}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GOOGLE_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:SYSTEM}]},contents:messages.map(message=>({role:message.role==='assistant'?'model':'user',parts:[{text:message.content}]})),generationConfig:{maxOutputTokens:512,temperature:0.3,thinkingConfig:{thinkingLevel:'minimal'}}}),signal});
+        const response=await fetcher(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(googleModel)}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GOOGLE_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:SYSTEM_PROMPT}]},contents:messages.map(message=>({role:message.role==='assistant'?'model':'user',parts:[{text:message.content}]})),generationConfig:{maxOutputTokens:512,temperature:0.3,thinkingConfig:{thinkingLevel:'minimal'}}}),signal});
         if(!response.ok) throw failureForStatus(response.status);return response.json();
       },parentSignal);
       return {reply:googleText(output),provider:'google',model:googleModel,fallback:true};

@@ -150,3 +150,9 @@ Errors now identify static categories (timeout, authentication/permission, quota
 ## Change: explicit deployment configuration selection
 
 Root deploy scripts now select backend/wrangler.jsonc or frontend/wrangler.jsonc explicitly. Package-level deploy and dry-run scripts explicitly select their local config as well. This prevents accidental Wrangler initialization or missing-entry-point errors when configuration auto-discovery does not select the intended package. Use the repository-root scripts, or pnpm --dir with the repository's absolute path from another directory. No deployment has been performed by this change.
+
+## Change: audience-specific conversation and readable model output
+
+The canonical server prompt now lives in backend/src/prompt.js with version rwanda-chw-v2 and is shared by both providers. It names community health workers in Rwanda as the audience, requests plain language and normally 40–90 words, limits follow-up to one focused question, reuses known case facts, accepts unknown information, and gives short style examples. It avoids repeated disclaimer blocks and raw Markdown by default while preserving accurate capability boundaries and professional-review requirements. Prompt rules guide generation rather than guarantee compliance; live behavior and tests must be assessed separately.
+
+AssistantMessage renders any residual Markdown through react-markdown with raw HTML skipped, no images, and only HTTP/HTTPS links. Heading sizes are normalized to the chat typography. User messages remain plain text. No string stripping or truncation changes the meaning of model output. This is display formatting, not evidence validation.

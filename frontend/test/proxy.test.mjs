@@ -2,7 +2,7 @@ import {test, before, after} from 'node:test';
 import assert from 'node:assert/strict';
 import {createServer} from 'vite';
 let vite, worker;
-before(async()=>{vite=await createServer({server:{middlewareMode:true},appType:'custom'});worker=(await vite.ssrLoadModule('/worker.ts')).default;});
+before(async()=>{vite=await createServer({server:{middlewareMode:true,hmr:false},appType:'custom'});worker=(await vite.ssrLoadModule('/worker.ts')).default;});
 after(async()=>{await vite?.close();});
 test('same-origin browser chat is forwarded internally without the browser Origin',async()=>{
  const request=new Request('https://ijwi.example/api/chat',{method:'POST',headers:{Origin:'https://ijwi.example','Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:'Hello'}]})});
