@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node --watch src/dev.js",
     "test": "node --test",
-    "deploy": "wrangler deploy",
-    "deploy:check": "wrangler deploy --dry-run"
+    "deploy": "wrangler deploy --config wrangler.jsonc",
+    "deploy:check": "wrangler deploy --config wrangler.jsonc --dry-run"
   }
 }
