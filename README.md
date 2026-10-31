@@ -10,6 +10,28 @@ Built for **Hacktoberfest Hack Day Kigali Ã— Build54, ALX & GDG Rwanda**, Oct
 
 A retinal-screening prediction alone does not provide a complete case handoff. Health workers also need to collect context, understand what information is missing, and prepare a clear explanation for specialist review.
 
+## Why Rwanda, and why Ijwi?
+
+Rwanda had an estimated **130,800 adults living with diabetes in 2024**, while Orbis reports **around 30 ophthalmologists** nationwide. Making specialist time count matters: screening needs to lead to an understandable result and a well-prepared referral. Sources: [IDF](https://idf.org/our-network/regions-and-members/africa/members/rwanda/), [Orbis](https://gbr.orbis.org/en/where-we-work/africa/rwanda).
+
+### Existing solutions
+
+Rwanda already has AI-assisted retinal screening. RIIO reports working with **four diabetes clinics** using AI-powered fundus cameras to screen and refer patients. Ijwi builds on this direction by focusing on the conversation and case preparation around a screening result. [RIIO](https://www.riio.org/community-health-services).
+
+### Our open foundation and differentiator
+
+Ijwi combines **FastDRS, an open-source diabetic-retinopathy screening library**, with **Gemma 4, open-weight AI**. Developers can inspect and extend FastDRS, while Gemma's available weights create a path toward local adaptation and alternative hosting. [Gemma documentation](https://ai.google.dev/gemma/docs/core).
+
+The differentiator is specialized retinal screening connected to a conversational workflow for frontline health workers: identifying missing information, explaining available findings, and preparing clearer specialist handoffs. Reviewed Kinyarwanda explanations are planned. Gemma chat is working; connecting FastDRS results, evidence retrieval, and cited summaries remains the next integration milestone.
+
+### Impact and market opportunity
+
+Rwanda's government reports approximately **58,000 community health workers**, an established network through which better case preparation could support care closer to home. Image capture still requires equipped facilities and trained operators. [Government of Rwanda](https://www.gov.rw/highlights/social-transformation).
+
+Initial customers could be diabetes clinics, hospitals, and screening programmes, paying for hosting, integration, training, and support while the core remains open. Rwanda is the starting market; a validated workflow could later be adapted across East Africa.
+
+**The aim: better support for frontline workers, better-prepared cases for specialists, and a clearer understanding for patients.**
+
 ## What we are building
 
 Ijwi connects a fundus-image screening result with a persistent conversation. A health worker uploads an image, supplies case history, asks questions, and receives a draft summary linked to supporting reference passages.
