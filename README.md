@@ -2,9 +2,9 @@
 
 **A conversational retinal-screening assistant for community health workers, powered by Gemma 4 and FastDRS.**
 
-Built for **Hacktoberfest Hack Day Kigali × Build54, ALX & GDG Rwanda**, October 31, 2026.
+Built for **Hacktoberfest Hack Day Kigali Ã— Build54, ALX & GDG Rwanda**, October 31, 2026.
 
-**First prize target: Best Use of Gemma 4 — Google DeepMind / Google.**
+**First prize target: Best Use of Gemma 4 â€” Google DeepMind / Google.**
 
 ## The problem
 
@@ -35,15 +35,15 @@ Live, cached, and sample outputs will be clearly distinguished.
 ## Technology and sponsor contributions
 
 - **Gemma 4:** hosted model for conversation and tool-call generation.
-- **FastDRS:** Michael Mukiibi’s retinal-screening toolkit, running in a Docker inference service.
+- **FastDRS:** Michael Mukiibiâ€™s retinal-screening toolkit, running in a Docker inference service.
 - **Cloudflare Workers, D1, Vectorize, and R2:** application orchestration, structured storage, evidence retrieval, and private objects.
 - **Adaption:** planned preparation and augmentation of intake/tool-use examples, with held-out evaluation cases. The allocated data-work budget is 650 credits.
 
-We will show Adaption’s contribution through actual dataset artifacts and evaluation comparisons rather than assume augmentation improves results.
+We will show Adaptionâ€™s contribution through actual dataset artifacts and evaluation comparisons rather than assume augmentation improves results.
 
 ## Current status and evidence
 
-**Landing page implemented locally.** Includes a responsive project introduction and an interactive, explicitly illustrative workspace preview. Live Gemma conversations, FastDRS inference, retrieval, and deployment are not connected yet.
+**React + TypeScript landing page and Gemma chat implemented locally.** The conversation calls Cloudflare Workers AI first and Google Gemma 4 as fallback, with provider labels and error states. Provider adapters are covered by mocked tests; live credentials and deployed behavior have not been verified. FastDRS inference, evidence retrieval, and durable case storage remain planned.
 
 Public demo, demonstration video, measured latency, evaluation results, and implementation evidence will be added after they exist. English is the initial language; French and Kinyarwanda remain planned and require evaluation.
 

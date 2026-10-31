@@ -2,10 +2,17 @@
   "name": "ijwi-hack-day",
   "version": "0.1.0",
   "private": true,
-  "description": "Ijwi landing page and future Cloudflare application",
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
-    "check": "node --check public/app.js"
+    "dev:frontend": "pnpm --filter @ijwi/frontend dev",
+    "dev:backend": "pnpm --filter @ijwi/backend dev",
+    "build": "pnpm --filter @ijwi/frontend build",
+    "check": "pnpm --filter @ijwi/frontend check",
+    "test": "pnpm --filter @ijwi/backend test",
+    "deploy:frontend": "pnpm --filter @ijwi/frontend deploy",
+    "deploy:backend": "pnpm --filter @ijwi/backend deploy"
+  },
+  "packageManager": "pnpm@10.11.0",
+  "devDependencies": {
+    "wrangler": "^4.0.0"
   }
 }

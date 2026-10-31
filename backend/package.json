@@ -1,0 +1,12 @@
+{
+  "name": "@ijwi/backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/dev.js",
+    "test": "node --test",
+    "deploy": "wrangler deploy",
+    "deploy:check": "wrangler deploy --dry-run"
+  }
+}
