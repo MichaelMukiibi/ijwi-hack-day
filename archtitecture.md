@@ -111,3 +111,7 @@ Use `dev` as the integration branch and `feat/<scope>` for changes. Keep applica
 ## Frontend implementation baseline
 
 The landing page now uses React and Vite in `frontend/`, with TanStack Query owning API fetching, cancellation, caching, loading, and retry states. `backend/` holds the application Worker API and a Node development adapter. Vite proxies `/api` locally; the root Wrangler configuration combines the built frontend assets with the same backend handler for same-origin production requests. The health endpoint reports implemented capabilities, and preview endpoints explicitly return sample content. Gemma, FastDRS, and persistence remain future integrations.
+
+## Tooling conventions
+
+Use React with strict TypeScript for the frontend and pnpm for JavaScript workspace commands and dependency management. The root pnpm lockfile is authoritative; npm lockfiles are not used. Python work in the future Docker inference service uses uv, pyproject.toml, and uv.lock. Use uv add for Python dependencies and uv run for Python commands.
