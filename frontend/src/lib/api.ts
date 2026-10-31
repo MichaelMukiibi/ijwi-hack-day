@@ -29,7 +29,7 @@ export async function sendChat(messages: ChatMessage[], signal?: AbortSignal): P
   const response = await fetch(`${base}/api/chat`, {
     method: 'POST', headers: {'Content-Type': 'application/json', Accept: 'application/json'},
     body: JSON.stringify({messages}),
-    signal: AbortSignal.any([signal ?? new AbortController().signal, AbortSignal.timeout(50_000)]),
+    signal: AbortSignal.any([signal ?? new AbortController().signal, AbortSignal.timeout(65_000)]),
   });
   let data: unknown;
   try {data = await response.json();} catch {throw new Error('The backend returned an unreadable response. Please try again.');}
