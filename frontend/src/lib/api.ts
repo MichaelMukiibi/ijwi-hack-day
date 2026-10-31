@@ -22,3 +22,18 @@ export async function getPreview(tab: PreviewTab, signal?: AbortSignal): Promise
   if (!record(data) || data.mode !== 'sample' || !['title','description','eyebrow','note'].every(key => typeof data[key] === 'string') || !Array.isArray(data.rows) || !data.rows.every(row => record(row) && typeof row.label === 'string' && typeof row.value === 'string') || !Array.isArray(data.messages) || !data.messages.every(message => record(message) && ['user','assistant'].includes(String(message.role)) && typeof message.text === 'string')) throw new Error('Unexpected backend preview response.');
   return data as unknown as Preview;
 }
+
+export interface ChatMessage {role: 'user' | 'assistant'; content: string}
+export interface ChatReply {reply: string; provider: 'cloudflare' | 'google'; model: string; fallback: boolean; requestId: string}
+export async function sendChat(messages: ChatMessage[], signal?: AbortSignal): Promise<ChatReply> {
+  const response = await fetch(`${base}/api/chat`, {
+    method: 'POST', headers: {'Content-Type': 'application/json', Accept: 'application/json'},
+    body: JSON.stringify({messages}),
+    signal: AbortSignal.any([signal ?? new AbortController().signal, AbortSignal.timeout(50_000)]),
+  });
+  let data: unknown;
+  try {data = await response.json();} catch {throw new Error('The backend returned an unreadable response. Please try again.');}
+  if (!response.ok) throw new Error(record(data) && typeof data.error === 'string' ? data.error : `Chat request failed (${response.status}).`);
+  if (!record(data) || typeof data.reply !== 'string' || !data.reply.trim() || !['cloudflare','google'].includes(String(data.provider)) || typeof data.model !== 'string' || typeof data.fallback !== 'boolean' || typeof data.requestId !== 'string') throw new Error('Unexpected chat response.');
+  return data as unknown as ChatReply;
+}

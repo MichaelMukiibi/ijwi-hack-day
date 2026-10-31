@@ -43,7 +43,7 @@ We will show Adaptionâ€™s contribution through actual dataset artifacts and
 
 ## Current status and evidence
 
-**React + TypeScript frontend and backend connection implemented locally.** The landing page retains its design. TanStack Query fetches labeled sample workspace content from a separate application API. Live Gemma conversations, FastDRS inference, retrieval, and deployment are not connected yet.
+**React + TypeScript landing page and Gemma chat implemented locally.** The conversation calls Cloudflare Workers AI first and Google Gemma 4 as fallback, with provider labels and error states. Provider adapters are covered by mocked tests; live credentials and deployed behavior have not been verified. FastDRS inference, evidence retrieval, and durable case storage remain planned.
 
 Public demo, demonstration video, measured latency, evaluation results, and implementation evidence will be added after they exist. English is the initial language; French and Kinyarwanda remain planned and require evaluation.
 

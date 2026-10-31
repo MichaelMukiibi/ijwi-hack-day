@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch src/dev.js",
-    "test": "node --test"
+    "test": "node --test",
+    "deploy": "wrangler deploy",
+    "deploy:check": "wrangler deploy --dry-run"
   }
 }
