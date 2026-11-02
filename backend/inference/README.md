@@ -1,5 +1,8 @@
 # Ijwi retinal screening service
 
+For Render hosting, use the repository-root `render.yaml` and follow
+[Render deployment](RENDER.md). DigitalOcean remains an alternative.
+
 An isolated **FastAPI + Docker + FastDRS** CPU inference service for the `/screen` feature. The existing general chatbot continues to use `/api/chat` and does not depend on this container.
 
 ## What is implemented

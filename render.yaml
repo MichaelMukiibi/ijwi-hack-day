@@ -1,0 +1,20 @@
+# Deploy only the isolated retinal screening service.
+services:
+  - type: web
+    name: ijwi-screening
+    runtime: docker
+    plan: standard
+    numInstances: 1
+    autoDeployTrigger: "off"
+    dockerfilePath: ./backend/inference/Dockerfile
+    dockerContext: ./backend/inference
+    healthCheckPath: /readyz
+    envVars:
+      - key: PORT
+        value: "8000"
+      - key: FASTDRS_API_TOKEN
+        sync: false
+      - key: FASTDRS_MODEL_PATH
+        value: /app/models/mobilenet_v2.pth
+      - key: FASTDRS_USE_BEN_GRAHAM
+        value: "false"
