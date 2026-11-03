@@ -135,6 +135,23 @@ Documented model defaults: Cloudflare `@cf/google/gemma-4-26b-a4b-it`; Google `g
 
 Sources: https://developers.cloudflare.com/workers-ai/models/gemma-4-26b-a4b-it/ and https://ai.google.dev/gemma/docs/core/gemma_on_gemini_api
 
+## Change: clinician handoff and report review demo
+
+The React landing page now includes a focused clinician handoff workspace linked from the existing preview. It uses a typed synthetic fixture and in-memory frontend state; it adds no route, API, database table, framework, or dependency.
+
+The workspace separates patient-reported context, health-worker-entered observations, FastDRS availability, illustrative AI-draft placeholders, and clinician-entered fields. No live model generated the illustrative draft. Evidence and screening output remain explicitly unavailable. Missing fixture fields appear as review prompts, not inferred clinical facts.
+
+Reviewers can edit structured report sections, save a draft in page memory, move through review states, explicitly approve a saved and unchanged draft, reopen an approved report, reset the synthetic fixture, and print a clean report. Approval records no reviewer identity or signature. Activity timestamps are generated when demo actions occur; the history is neither secure nor permanent. All state clears on reload. No real patient data may be entered.
+
+This front-end-only contribution does not connect Gemma, FastDRS, RAG, D1, or persistent medical records. It does not provide diagnosis, treatment recommendations, or clinical validation.
+
+## Change: doctor report workspace demo
+
+The existing React app now adds a clinician-facing synthetic case queue and structured report workspace alongside the handoff page. It uses a typed demo adapter with replaceable case/report contracts and adds no API route, database schema, dependency, or service integration.
+
+Queue items contain no patient information, worker submissions, images, screening runs, case-linked Gemma explanations, or evidence. The UI states each absence explicitly. The existing Gemma chat API is not case-bound and is not used to generate report content. `GEMMA_API_KEY` is not a frontend setting; provider credentials remain backend-only as documented in the environment examples.
+
+Report edits, save snapshots, review states, and activity remain per-case in-memory state. Approval is explicit and requires a saved, unchanged report. Returning a report for changes, reopening review, reset, and print are client-side demo actions; no reviewer identity, durable audit record, secure storage, or clinical decision is asserted. Both report workspaces use the same print-target helper to keep print output separate.
 ## Change: browser Origin handling
 
 The frontend proxy validates browser Origin against its own public URL before forwarding API calls. It removes the already-validated Origin header on the internal service-binding request, avoiding comparison with a backend address. Foreign browser origins remain rejected at the frontend boundary; direct backend requests retain the explicit origin allowlist.
